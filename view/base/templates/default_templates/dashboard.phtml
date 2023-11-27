@@ -1,0 +1,18 @@
+<?php
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+
+use Magento\Framework\Escaper;
+use Jajuma\PowerToys\Block\PowerToys\Dashboard;
+
+/** @var Dashboard $block */
+/** @var Escaper $escaper */
+
+?>
+<div class="dashboard-item-content dashboard-item-content-<?= $block->getData('block_id') ?>">
+    <b><?= $block->getName() ?></b>
+    <p><?= 'Example Dashboard' ?></p>
+</div>

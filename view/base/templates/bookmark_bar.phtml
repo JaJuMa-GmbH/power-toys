@@ -1,0 +1,232 @@
+<?php
+
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+
+use Jajuma\PowerToys\Block\PowerToys;
+use Magento\Framework\Escaper;
+use Jajuma\PowerToys\ViewModel\HeroiconsOutline;
+
+// phpcs:disable Magento2.Files.LineLength, Generic.Files.LineLength
+/** @var PowerToys $block */
+/** @var Escaper $escaper */
+/** @var HeroiconsOutline $heroicons */
+$heroicons = $block->getHeroIconsOutline();
+$magewire = $block->getMagewire();
+$files = $magewire->getFileIcons();
+?>
+
+<div>
+    <?php
+    if ($block->isEnabledBookMark()) { ?>
+        <div class="powertoys-bookmark-bar">
+            <span class="pot-navigation pot-previous" onclick="goBackItem(this.closest('.powertoys-bookmark-bar'))">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </span>
+            <?php if (count($magewire->getBookmarkItems())) : ?>
+                <?php foreach ($magewire->getBookmarkItems() as $bookmark) : ?>
+                    <a wire:loading.class="loading" oncontextmenu="editBookmark('<?= $bookmark['bookmark_id'] ?>', '<?= $bookmark['name'] ?>', '<?= $bookmark['url'] ?>', '<?= $bookmark['position'] ?>', '<?= $bookmark['icon_svg'] ?>')" class="bookmark-item editable" data-bookmark-id="<?= $bookmark['bookmark_id'] ?>" href="<?= $block->escapeUrl($block->getBookMarkUrl($bookmark['url'])) ?>">
+                        <?php if ($bookmark['icon_svg']) : ?>
+                            <?= $heroicons->renderHtml($bookmark['icon_svg']) ?>
+                        <?php endif; ?>
+                        <?= $block->escapeHtml($bookmark['name']) ?>
+                    </a>
+                <?php endforeach; ?>
+
+            <?php endif; ?>
+            <div class="bookmark-item" onclick="createBookmark()" title="<?= $block->escapeHtml('Add New Bookmark') ?>">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24" style="margin-right:0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+            </div>
+            <span class="pot-navigation pot-next" onclick="goNextItem(this.closest('.powertoys-bookmark-bar'))">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </span>
+        </div>
+    <?php } ?>
+    <div class="powerToysModalWrapper" id="powertoys-bookmark-modal">
+        <div class="powertoys-modal powerToysjsModal bookmarkModal <?= (isset($magewire->bookmark['icon_svg']) && $magewire->bookmark['icon_svg']) || $magewire->hasError('bookmark.name') || $magewire->hasError('bookmark.url') ? 'open' : '' ?>">
+            <div class="powertoys-panel-header bookmark">
+                <div class="powertoys-panel-title">
+                    <span class="title-bookmark">
+                        <?php if (isset($magewire->bookmark['bookmark_id']) && $magewire->bookmark['bookmark_id']) : ?>
+                            <?= $escaper->escapeHtml('Edit Bookmark') ?>
+                        <?php else : ?>
+                            <?= $escaper->escapeHtml('Create New Bookmark') ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <div class="powertoys-modal__close jsModalCloseBookmark" onclick="powerToysOpenBookmarkModalClose()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+            <input type="hidden" name="bookmark_id" wire:model.defer="bookmark.bookmark_id">
+            <input type="hidden" name="icon_svg" wire:model.defer="bookmark.icon_svg">
+            <div class="powertoys-bookmark-settings">
+                <div class="field required status">
+                    <label for="status" class="label"><?= $escaper->escapeHtml('Status') ?></label>
+                    <div class="control">
+                        <select name="status" wire:model.defer="bookmark.status">
+                            <option value="1" selected wire:key="1"><?= $escaper->escapeHtml('Enable') ?></option>
+                            <option value="0" wire:key="1"><?= $escaper->escapeHtml('Disable') ?></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field required">
+                    <label for="name" class="label"><span><?= $escaper->escapeHtml('Name') ?></span></label>
+                    <div class="control">
+                        <input type="text" wire:model.defer="bookmark.name" name="name" id="name" title="<?= $escaper->escapeHtmlAttr('BookMark Name') ?>" class="input-text">
+                        <?php if ($magewire->hasError('bookmark.name')) : ?>
+                            <?= $magewire->getError('bookmark.name') ?>
+                        <?php endif ?>
+                    </div>
+                </div>
+                <div class="field required">
+                    <label for="url" class="label"><?= $escaper->escapeHtml('Url') ?></label>
+                    <div class="control">
+                        <input type="text" wire:model.defer="bookmark.url" name="url" id="url" title="<?= $escaper->escapeHtmlAttr('BookMark Url') ?>" class="input-text">
+                        <?php if ($magewire->hasError('bookmark.url')) : ?>
+                            <?= $magewire->getError('bookmark.url') ?>
+                        <?php endif ?>
+                    </div>
+                </div>
+                <div class="field required bookmark-icon-list">
+                    <label for="icon" class="label"><?= $escaper->escapeHtml('Icon') ?></label>
+                    <div class="control">
+                        <?php foreach ($files as $icon) : ?>
+                            <span class="bookmark-icon-item" data-icon-name="<?= str_replace('.svg', '', $icon) ?>">
+                                <?= $heroicons->renderHtml(str_replace('.svg', '', $icon)) ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="powertoys-actions">
+                <div id="buttonDeleteBookmark" class="btn action-btn-secondary" wire:click="deleteBookmark">
+                    <?= $escaper->escapeHtml('Delete') ?>
+                </div>
+                <button id="buttonGetCurrentPage" class="action-btn-primary" onclick="getInfoCurrentPage()">
+                    <?= $escaper->escapeHtml('Get Current Page') ?>
+                </button>
+                <button type="submit" wire:click="saveBookmark" class="action-btn-primary" title="<?= $escaper->escapeHtmlAttr('Create a BookMark') ?>">
+                    <?= $escaper->escapeHtml('Save') ?>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var listIcon = document.querySelectorAll('#powertoys-bookmark-modal .bookmark-icon-item');
+        const powerToyBookMarkPopupModal = document.querySelector('#powertoys-bookmark-modal .powertoys-modal');
+        var inputBookmarkName = document.querySelector("input[name='name']");
+        var inputBookmarkUrl = document.querySelector("input[name='url']");
+        var inputBookmarkId = document.querySelector("input[name='bookmark_id'");
+        var inputBookmarkIcon = document.querySelector("input[name='icon_svg'");
+        var btnDeleteBookmark = document.querySelector("#buttonDeleteBookmark");
+        var btnGetBookmarkCurrentPage = document.querySelector("#buttonGetCurrentPage");
+        var backendSuffix = '<?= $block->getBackendSuffix() ?>';
+        function powerToysOpenBookmarkModalClose() {
+            powerToyBookMarkPopupModal.classList.remove('open');
+            powerToysElement.classList.remove("openSubPanel");
+        }
+        // reset selected icon
+        function resetSelectedIcon() {
+            listIcon.forEach(function(iconItem) {
+                iconItem.classList.remove('selected');
+            });
+        }
+        function getInfoCurrentPage() {
+            inputBookmarkName.value = document.title;
+            var endpoint = window.location.pathname;
+            var pathUrl = '';
+            if (endpoint.includes(backendSuffix)) {
+                //backend URL
+                if (endpoint.includes('/key/')) {
+                    pathUrl = endpoint.substr(1, endpoint.search('/key/') - 1);
+                } else {
+                    pathUrl = endpoint.substr(1);
+                }
+            } else {
+                //frontend URL
+                pathUrl = window.location.href.replace(BASE_URL, '');
+            }
+            inputBookmarkUrl.value = pathUrl;
+            inputBookmarkName.dispatchEvent(new Event('input'));
+            inputBookmarkUrl.dispatchEvent(new Event('input'));
+        }
+        // prevent right click default browser
+        document.getElementsByClassName('powertoys-bookmark-bar')[0].addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+        });
+        //event create new bookmark show popup
+        window.addEventListener('action-create-bookmark', event => {
+            powerToyBookMarkPopupModal.classList.add('open');
+            powerToysElement.classList.add("openSubPanel");
+            resetSelectedIcon();
+        });
+        // event create Bookmark
+        function createBookmark() {
+            //set tilte
+            powerToyBookMarkPopupModal.getElementsByClassName('title-bookmark')[0].innerText = '<?= 'Create New Bookmark' ?>';
+            //init value
+            inputBookmarkUrl.value = '';
+            inputBookmarkName.value = '';
+            inputBookmarkId.value = '';
+            inputBookmarkIcon.value = '';
+            inputBookmarkName.dispatchEvent(new Event('input'));
+            inputBookmarkUrl.dispatchEvent(new Event('input'));
+            inputBookmarkId.dispatchEvent(new Event('input'));
+            inputBookmarkIcon.dispatchEvent(new Event('input'));
+            //
+            btnDeleteBookmark.style.display = 'none';
+            btnGetBookmarkCurrentPage.style.display = 'block';
+            powerToyBookMarkPopupModal.classList.add('open');
+            powerToysElement.classList.add("openSubPanel");
+            resetSelectedIcon();
+        }
+        //edit Bookmark event
+        function editBookmark(bookMarkId, nameBookmark, urlBookmark, position, iconSvg) {
+            //set tilte
+            powerToyBookMarkPopupModal.getElementsByClassName('title-bookmark')[0].innerText = '<?= 'Edit Bookmark' ?>';
+            // set value bookmark
+            inputBookmarkUrl.value = urlBookmark;
+            inputBookmarkName.value = nameBookmark;
+            inputBookmarkId.value = bookMarkId;
+            inputBookmarkIcon.value = iconSvg;
+            inputBookmarkName.dispatchEvent(new Event('input'));
+            inputBookmarkUrl.dispatchEvent(new Event('input'));
+            inputBookmarkId.dispatchEvent(new Event('input'));
+            inputBookmarkIcon.dispatchEvent(new Event('input'));
+            //
+            btnDeleteBookmark.style.display = 'block';
+            btnGetBookmarkCurrentPage.style.display = 'none';
+            powerToyBookMarkPopupModal.classList.add('open');
+            powerToysElement.classList.add("openSubPanel");
+            resetSelectedIcon();
+            powerToyBookMarkPopupModal.querySelector("[data-icon-name='" + iconSvg + "']").classList.add('selected');
+        }
+        // event click icon
+        listIcon.forEach(function(icon) {
+            icon.addEventListener('click', function(event, s) {
+                resetSelectedIcon();
+                icon.classList.add('selected');
+                inputBookmarkIcon.value = icon.dataset.iconName;
+                inputBookmarkIcon.dispatchEvent(new Event('input'));
+            });
+        })
+        // event close popup
+        window.addEventListener('close-bookmark-modal', event => {
+            powerToyBookMarkPopupModal.classList.remove('open');
+            powerToysElement.classList.remove("openSubPanel");
+        });
+    </script>
+</div>

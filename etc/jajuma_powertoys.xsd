@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="urn:magento:module:Magento_Widget:etc/types.xsd"/>
+
+    <xs:annotation>
+        <xs:documentation>Contains powertoys.</xs:documentation>
+    </xs:annotation>
+
+    <xs:element name="powertoys">
+        <xs:annotation>
+            <xs:documentation>A list of toys.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="quickaction" type="quickactionType" />
+                <xs:element name="dashboard" type="dashboardType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="quickactionType">
+        <xs:annotation>
+            <xs:documentation>Definition of a quick action</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="label" type="translatableType" />
+            <xs:element name="description" type="translatableType" />
+            <xs:element type="argumentsType" name="arguments" />
+        </xs:all>
+        <xs:attribute name="id" type="xs:ID" use="required" />
+        <xs:attribute name="class" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="dashboardType">
+        <xs:annotation>
+            <xs:documentation>Definition of a dashboard</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="label" type="translatableType" />
+            <xs:element name="description" type="translatableType" />
+        </xs:all>
+        <xs:attribute name="id" type="xs:ID" use="required" />
+        <xs:attribute name="class" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="bookmarkType">
+        <xs:annotation>
+            <xs:documentation>Definition of a bookmark</xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="label" type="translatableType" />
+            <xs:element name="description" type="translatableType" />
+        </xs:all>
+        <xs:attribute name="id" type="xs:ID" use="required" />
+        <xs:attribute name="class" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="translatableType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="translate" use="optional" fixed="true" type="xs:boolean"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="argumentsType">
+        <xs:sequence>
+            <xs:element name="argument" type="argumentType" minOccurs="1" maxOccurs="unbounded">
+                <xs:key name="argumentItemName">
+                    <xs:selector xpath="item" />
+                    <xs:field xpath="@name" />
+                </xs:key>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="argumentType" abstract="true" mixed="true">
+        <xs:attribute name="name" use="optional" />
+    </xs:complexType>
+</xs:schema>

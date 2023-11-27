@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Jajuma_PowerToys::css/main.css"/>
+    </head>
+    <body>
+<!--    Load powertoys in adminhtml-->
+        <referenceContainer name="page.wrapper">
+            <block class="Jajuma\PowerToys\Block\PowerToys" name="jajuma_power_toys"
+                   ifconfig="power_toys/general/is_enable"
+                   before="-"
+                   template="Jajuma_PowerToys::powertoys.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

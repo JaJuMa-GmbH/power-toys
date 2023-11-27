@@ -1,0 +1,785 @@
+<?php
+
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+
+declare(strict_types=1);
+
+use Jajuma\PowerToys\Block\PowerToys;
+use Jajuma\PowerToys\Helper\Data;
+use Magento\Framework\Escaper;
+
+/** @var PowerToys $block */
+/** @var Escaper $escaper */
+/** @var Data $powerToysHelper */
+
+$powerToysHelper = $this->helper(Data::class);
+$sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html/load'));
+?>
+
+<?php if ($block->isAdmin()): ?>
+<script>
+    localStorage.setItem("admin_url", "<?= $block->getUrl('jajuma_powertoys/session/check') ?>");
+</script>
+<?php endif ?>
+
+<?php echo $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setTemplate("Jajuma_PowerToys::global.phtml")->toHtml(); ?>
+
+<div id="jajuma-powertoys-floating-panel">
+    <span class="jajuma-powertoys-floating-btn">
+        <img src="<?= $block->escapeUrl($this->getDefaultIcon()); ?>" alt="JaJuMa Power Toys" draggable="false" />
+    </span>
+
+    <div class="power-toys-container" powertoys-content>
+        <div class="powertoys-panel-header">
+            <div class="powertoys-panel-title">
+                <img src="<?= $block->escapeUrl($this->getDefaultIcon()); ?>" alt="JaJuMa Power Toys" />
+                <span>JaJuMa Power Toys</span>
+            </div>
+            <div class="powertoys-header-right">
+                <label class="pot-toggle">
+                    <span class="pot-toggle-label"><?= 'Sort mode' ?></span>
+                    <input class="pot-toggle-checkbox" type="checkbox"
+                           onchange="toggleEditmode(this.checked)"
+                    >
+                    <div class="pot-toggle-switch"></div>
+                </label>
+                <div class="powertoys-darklight-switcher">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="powertoys-moon">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="powertoys-sun">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                    </svg>
+                </div>
+                <div class="powertoys-close-panel-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!--        Quick action renderer -->
+        <?php
+        if ($block->isEnabledQuickAction()) {
+            $quickActionBlocks = $block->getBlocks('quickaction');
+        ?>
+            <div class="powertoys-actions">
+                <ul class="powertoys-actions-list">
+                    <span class="pot-navigation pot-previous" onclick="goBackItem(this.closest('.powertoys-actions-list'))">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg>
+                    </span>
+                    <?php foreach ($quickActionBlocks as $quickAction) : ?>
+                        <?php if ($quickAction->isEnable()) : ?>
+                            <li class="quickaction-item" <?= $quickAction->isLazyload() ? 'lazyload' : '' ?> data-action-id="<?= $quickAction->getData('block_id') ?>">
+                                <span class="powertoys-action-item powertoys-action-item-<?= $quickAction->getData('block_id') ?>" onclick="<?= $quickAction->onClickAction(); ?>">
+                                    <?php if ($quickAction->getQuickActionType() == 'popup') : ?>
+                                        <?php if ($quickAction->getIcon()) : ?>
+                                            <img data-src="<?= $quickAction->getIcon() ?>">
+                                        <?php endif; ?>
+                                        <?= $quickAction->getName() ?>
+                                    <?php endif; ?>
+                                    <?php if ($quickAction->getQuickActionType() == 'button') : ?>
+                                        <div class="widget-action-button-div">
+                                            <?php if (!$quickAction->isLazyload()) : ?>
+                                                <?= $quickAction->toHtml() ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </span>
+                            </li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                    <span class="pot-navigation pot-next" onclick="goNextItem(this.closest('.powertoys-actions-list'))">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+                </ul>
+            </div>
+        <?php } ?>
+
+        <!--        Widget renderer -->
+        <?php
+        if ($block->isEnabledWidget()) {
+            $widgetBlocks = $block->getBlocks('dashboard');
+        ?>
+            <div class="powertoys-dashboard-widgets">
+                <span class="pot-navigation pot-previous" onclick="goBackItem(this.closest('.powertoys-dashboard-widgets'))">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                </span>
+                <?php foreach ($widgetBlocks as $widget) : ?>
+                    <?php if ($widget->isEnable()) : ?>
+
+                        <div class="widget-item widget-item-<?= $widget->getData('block_id') ?>" <?= $widget->isLazyload() ? 'lazyload' : '' ?> data-widget-id="<?= $widget->getData('block_id') ?>">
+                            <?php if (!$widget->isLazyload()) : ?>
+                                <?= $widget->toHtml() ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <span class="pot-navigation pot-next" onclick="goNextItem(this.closest('.powertoys-dashboard-widgets'))">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </span>
+            </div>
+        <?php } ?>
+
+        <!--        Bookmark renderer-->
+        <?php
+        if ($block->isEnabledBookMark()) {
+            $bookmarkBarBlock = $block->getLayout()->getBlock('jajuma_power_toys_bookmark_bar');
+            if ($bookmarkBarBlock) {
+                echo $bookmarkBarBlock->toHtml();
+            }
+        }
+        ?>
+
+        <div class="powertoys-panel-footer">
+            <div class="powertoys-footer-left">
+                <a href="https://www.jajuma.de/en/jajuma-develop/magento-extensions?mtm_campaign=pot#maincontent"
+                   target="_blank">
+                   Made with <span style="color: red;">❤</span> by JaJuMa - Discover More!</a>
+            </div>
+            <div class="powertoys-footer-ticker">
+                <div class="powertoys-footer-ticker-content" style="width: 100%; height: 25px; position: relative;"></div>
+            </div>
+            <div class="powertoys-footer-right">
+                <a href="https://www.jajuma.de/en/jajuma-develop/magento-extensions?mtm_campaign=pot#maincontent"
+                   target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="500" height="168" viewBox="0 0 500 168"
+                     shape-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
+                     fill="CurrentColor">
+                    <path d="M107.5-.5h9c8.482 3.2368 16.815 7.07014 25 11.5 9.555 6.2783 19.555
+                     11.7783 30 16.5 16.266-2.9333 32.6-5.4333 49-7.5 9.718-1.1005 19.218-.2672 28.5 2.5.667 14 .667 28
+                     0 42-1.932 1.5383-4.099 2.705-6.5 3.5-6.636 1.7939-13.303 3.4606-20 5l-2.5 2.5c-10.476
+                     20.9524-21.476 41.619-33 62-8.071 12.238-18.237 22.238-30.5
+                     30h-10c-14.001-5.15-26.667-12.65-38-22.5-20.1461-19.472-38.8128-40.139-56-62-17.8045-1.2466-35.4711-3.4132-53-6.5v-43c5.43272-2.2752
+                     11.0994-3.7752 17-4.5l59-1 3-1c8.0311-7.6968 15.6978-15.6968 23-24 2.227-.94102 4.227-2.107682
+                     6-3.5zm48 30c3.441-.1989 6.774.3011 10 1.5 17.965 9.8159 36.298 18.8159 55 27-2.497 5.3315-5.497
+                     10.3315-9 15-20.383 4.1968-39.05 12.1968-56 24-2 .6667-4 .6667-6
+                     0-29.128-8.1325-58.7947-13.1325-89-15-8.3713-8.7026-16.3713-17.7026-24-27
+                     11.5334-7.2648 23.2001-14.2648 35-21 3.2848-.8236 6.6182-1.3236 10-1.5 9.1363 1.2879 18.303 2.2879
+                     27.5 3 15.751-1.1558 31.251-3.1558 46.5-6z"></path><path d="M291.5 12.5h5c.167
+                     14.6705 0 29.3371-.5 44-1.72 6.2856-5.886 9.2856-12.5 9-5.823.2624-9.823-2.2376-12-7.5.712-1.442
+                     1.879-2.2753 3.5-2.5 2.133 1.9536 4.633 3.287 7.5 4 2.854-.5669 4.687-2.2335 5.5-5l1-40c.995-.5659
+                     1.828-1.2326 2.5-2z"></path><path d="M358.5 12.5h6c.435 15.3913-.065 30.7246-1.5
+                     46-2.34 5.1186-6.34 7.452-12 7-5.696.3805-9.863-1.9528-12.5-7 .712-1.5459 1.878-2.5459 3.5-3 2.621
+                     1.7267 5.455 3.06 8.5 4 1.758-.6279 3.258-1.6279 4.5-3 .76-14.8634 1.926-29.5301 3.5-44z"></path>
+                    <path d="M417.5 12.5c3.072-.3174 6.072.0159 9 1l12.5 27c3.588-9.6745 8.088-18.8412 13.5-27.5
+                    3.317-.4983 6.65-.665 10-.5v52h-8c.167-13.3375 0-26.6708-.5-40-3.727 8.4551-7.727 16.7884-12
+                    25-2.12 2.5801-4.287 2.5801-6.5 0-4.439-8.5448-8.606-17.2115-12.5-26-.5 13.6626-.667 27.3293-.5
+                    41h-8c-.167-16.3367 0-32.6701.5-49 .698-1.1906 1.531-2.1906 2.5-3z"></path>
+                    <path d="M316.5 25.5c11.517-1.4762 17.517 3.5238 18 15-1.144 7.9946-1.144 15.9946 0
+                    24-1.699.1602-3.366-.0065-5-.5-.899-1.2362-2.066-2.0696-3.5-2.5-4.799 2.7664-9.966
+                    3.5997-15.5 2.5-2.167-.8333-3.667-2.3333-4.5-4.5-1.557-7.2527-1.89-14.586-1-22 1.348-6.5125
+                    5.181-10.5125 11.5-12zm1 7c2.865-.4452 5.365.2215 7.5 2 1.581 6.2226 1.915 12.5559 1 19-9.84
+                    8.163-14.34 5.8297-13.5-7l.5-9c1.025-2.187 2.525-3.8536 4.5-5z"></path>
+                    <path d="M499.5 32.5v32c-1.373.1567-2.707-.01-4-.5-.899-1.2362-2.066-2.0696-3.5-2.5-15.499
+                    7.4996-22.666 2.6663-21.5-14.5-.677-18.1631 7.656-24.4964 25-19 1.57 1.3968 2.904 2.8968 4 4.5zm-16
+                    0c2.865-.4452 5.365.2215 7.5 2 1.581 6.2226 1.915 12.5559 1 19-9.856 8.155-14.356
+                    5.8216-13.5-7l.5-9c1.025-2.187 2.525-3.8536 4.5-5z"></path>
+                    <path d="M375.5 26.5h6c-.423 10.0797.077 20.0797 1.5 30 .804 1.3045 1.971 1.9712 3.5 2 2.94-.8035
+                    5.607-2.1369 8-4l2-27c2.247-.8742 4.58-1.2076 7-1v38c-3.682.7747-6.182-.5586-7.5-4-4.861
+                    3.7841-10.361 4.9507-16.5 3.5-1.431-.4652-2.597-1.2986-3.5-2.5-1.812-11.6454-1.979-23.3121-.5-35z">
+                    </path>
+                </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="powertoys-loading-wrapper">
+            <div class="powertoys-dots">
+                <div class="powertoys-dot"></div>
+                <div class="powertoys-dot"></div>
+                <div class="powertoys-dot"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<?php if ($block->isEnabledQuickAction()) : ?>
+    <div class="powerToysModalWrapper" id="powerToysModalWrapperQuickAction">
+        <?php foreach ($quickActionBlocks as $quickAction) : ?>
+            <?php if ($quickAction->isEnable()) : ?>
+                <?php if ($quickAction->getQuickActionType() == 'popup') : ?>
+                    <div class="powertoys-modal powertoys-modal-<?= $quickAction->getData('block_id') ?> powerToysjsModal" <?= $quickAction->isLazyload() ? 'lazyload' : '' ?> data-action-id="<?= $quickAction->getData('block_id') ?>">
+                        <div class="powertoys-panel-header">
+                            <div class="powertoys-panel-title">
+                                <span><?= $quickAction->getName() ?></span>
+                            </div>
+                            <div class="powertoys-modal__close jsModalClose">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="powertoys-modal__container">
+                            <div class="powertoys-modal__content" model-content>
+                                <?php if (!$quickAction->isLazyload()) : ?>
+                                    <?= $quickAction->toHtml() ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+<script>
+    //Sort mode flag
+    var editmode = false;
+    var actionList = document.querySelector("[powertoys-content] .powertoys-actions .powertoys-actions-list");
+    var dashboardList = document.querySelector("[powertoys-content] .powertoys-dashboard-widgets");
+    var bookmarkList = document.querySelector(".powertoys-bookmark-bar");
+
+    const toggleEditmode = status => {
+        toggleSortable(!status);
+        editmode = status;
+        if (status) {
+            if (actionList){
+                actionList.classList.add('editmode');
+            }
+            if (dashboardList){
+                dashboardList.classList.add('editmode');
+            }
+            if (bookmarkList){
+                bookmarkList.classList.add('editmode');
+            }
+        } else {
+            if (actionList){
+                actionList.classList.remove('editmode');
+            }
+            if (dashboardList){
+                dashboardList.classList.remove('editmode');
+            }
+            if (bookmarkList){
+                bookmarkList.classList.remove('editmode');
+            }
+        }
+    }
+
+    const showArrow = wrapper => {
+        if (wrapper.offsetWidth < wrapper.scrollWidth) {
+            wrapper.classList.remove('hide-arrow-left');
+            wrapper.classList.remove('hide-arrow-right');
+
+            if (wrapper.scrollLeft < 1) {
+                wrapper.classList.add('hide-arrow-left');
+            }
+
+            if ((wrapper.scrollWidth - wrapper.offsetWidth) < wrapper.scrollLeft) {
+                wrapper.classList.add('hide-arrow-right');
+            }
+        } else {
+            wrapper.classList.add('hide-arrow-left');
+            wrapper.classList.add('hide-arrow-right');
+        }
+    }
+
+    const checkShowingArrow = () => {
+        showArrow(actionList);
+        showArrow(dashboardList);
+        showArrow(bookmarkList);
+    }
+
+    checkShowingArrow();
+
+    window.addEventListener("resize", (event) => {
+        checkShowingArrow();
+    });
+
+    [actionList, dashboardList, bookmarkList].forEach(element => element.addEventListener("scroll", (event) => {
+        setTimeout(()=>{
+            showArrow(element);
+        },50);
+    }));
+
+    const dragScrolling = (sliderTarget) => {
+        const slider = document.querySelector(sliderTarget);
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            if (editmode) {return};
+            isDown = true;
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => {
+            if (editmode) {return};
+            isDown = false;
+        });
+        slider.addEventListener('mouseup', (e) => {
+            if (editmode) {return};
+            isDown = false;
+            setTimeout(()=>{
+                slider.classList.remove('dragging');
+            },50);
+        });
+        slider.addEventListener('mousemove', (e) => {
+            if (editmode) {return};
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX); //scroll-fast
+            slider.scrollLeft = scrollLeft - walk;
+            slider.classList.add('dragging');
+        });
+    }
+
+    if (actionList){
+        dragScrolling('.powertoys-actions-list');
+    }
+    if (dashboardList) {
+        dragScrolling('.powertoys-dashboard-widgets');
+    }
+    if (bookmarkList) {
+        dragScrolling('.powertoys-bookmark-bar');
+    }
+
+    const goNextItem = wrapper => {
+        wrapper.classList.add('smoothy');
+        wrapper.scrollLeft = wrapper.scrollLeft + 260;
+        setTimeout(() => {
+            wrapper.classList.remove('smoothy');
+        }, 150);
+    }
+
+    const goBackItem = wrapper => {
+        wrapper.classList.add('smoothy');
+        wrapper.scrollLeft = wrapper.scrollLeft - 260;
+        setTimeout(() => {
+            wrapper.classList.remove('smoothy');
+        }, 150);
+    }
+
+    //Script loader
+    var loadScript = (scriptContent, type = 'text/javascript') => {
+        const script = document.createElement('script')
+        script.text = scriptContent
+        script.type = type
+        document.head.appendChild(script)
+    }
+
+    const updateSortList = type => {
+        let postData = [];
+        if (type === 'quickaction') {
+            let actionList = document.querySelector("[powertoys-content] .powertoys-actions .powertoys-actions-list");
+            actionList.querySelectorAll("[data-action-id]").forEach(item => {
+                postData.push(item.getAttribute('data-action-id'));
+            })
+        }
+        if (type === 'dashboard') {
+            let dashboardList = document.querySelector("[powertoys-content] .powertoys-dashboard-widgets");
+            dashboardList.querySelectorAll("[data-widget-id]").forEach(item => {
+                postData.push(item.getAttribute('data-widget-id'));
+            })
+        }
+        if (type === 'bookmark') {
+            let bookmarkList = document.querySelector(".powertoys-bookmark-bar");
+            bookmarkList.querySelectorAll("[data-bookmark-id]").forEach(item => {
+                postData.push(item.getAttribute('data-bookmark-id'));
+            })
+        }
+        if (postData.length > 1) {
+            fetch('<?= $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html/sort')); ?>', {
+                method: 'POST',
+                body: JSON.stringify({
+                    type: type,
+                    data: postData
+                }),
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            });
+        }
+    }
+
+    const toggleSortable = (status) => {
+        if (actionList){
+            window.sortable.get(actionList).option('disabled', status);
+        }
+        if (dashboardList){
+            window.sortable.get(dashboardList).option('disabled', status);
+        }
+        if (bookmarkList){
+            window.sortable.get(bookmarkList).option('disabled', status);
+        }
+    }
+    //Load sortable lib
+    let sortableScript = `
+        import Sortable from '<?= $block->getViewFileUrl('Jajuma_PowerToys/js/sortable.esm.js') ?>';
+        if (actionList) {
+            new Sortable(actionList, {
+                animation: 150,
+                ghostClass: 'blue-background-class',
+                disabled: true,
+                onChange: function() {
+                    updateSortList('quickaction');
+                }
+            });
+        }
+
+        if (dashboardList) {
+            new Sortable(dashboardList, {
+                animation: 150,
+                ghostClass: 'blue-background-class',
+                disabled: true,
+                onChange: function() {
+                    updateSortList('dashboard');
+                }
+            });
+        }
+
+        if (bookmarkList) {
+            new Sortable(bookmarkList, {
+                animation: 150,
+                ghostClass: 'blue-background-class',
+                disabled: true,
+                onChange: function() {
+                    updateSortList('bookmark');
+                }
+            });
+        }
+
+        window.sortable = Sortable;
+    `;
+    loadScript(sortableScript, 'module');
+
+    if (typeof(hyva) === 'undefined') {
+        require(['jquery', 'mage/cookies'], function() {
+            if (!window.livewire_token) {
+                window.livewire_token = '<?= $block->getFormKey() ?>';
+                jQuery.cookie('form_key', window.livewire_token, {
+                    secure: false
+                });
+            }
+        })
+    }
+
+    const powerToysElement = document.getElementById("jajuma-powertoys-floating-panel");
+    const powerToysElementBtn = powerToysElement.querySelector(".jajuma-powertoys-floating-btn");
+    const closepowerToysElement = powerToysElement.querySelector(".powertoys-close-panel-btn");
+    const powerToysModalWrapper = document.querySelector('#powerToysModalWrapperQuickAction');
+
+    if (localStorage.getItem("jajumaLightMode")) {
+        if (localStorage.getItem("jajumaLightMode") === "true") {
+            powerToysElement.classList.add("jajumaLightMode");
+        } else {
+            powerToysElement.classList.remove("jajumaLightMode");
+        }
+    }
+
+    let oldPositionX,
+        oldPositionY;
+
+    const move = (e) => {
+        if (!powerToysElement.classList.contains("powerToys-active")) {
+            if (e.type === "touchmove") {
+                powerToysElement.style.top = e.touches[0].clientY + "px";
+                powerToysElement.style.left = e.touches[0].clientX + "px";
+            } else {
+                powerToysElement.style.top = e.clientY + "px";
+                powerToysElement.style.left = e.clientX + "px";
+            }
+        }
+    };
+
+    const mouseDown = (e) => {
+        powerToysElement.classList.add("mousehold");
+        if (!powerToysElement.classList.contains("powerToys-active")) {
+            // console.log("mouse down");
+            oldPositionY = powerToysElement.style.top;
+            oldPositionX = powerToysElement.style.left;
+            if (e.type === "mousedown") {
+                window.addEventListener("mousemove", move);
+            } else {
+                window.addEventListener("touchmove", move);
+            }
+        }
+    };
+
+    const mouseUp = (e) => {
+        powerToysElement.classList.remove("mousehold");
+        if (!powerToysElement.classList.contains("powerToys-active")) {
+            // console.log("mouse up");
+            if (e.type === "mouseup") {
+                window.removeEventListener("mousemove", move);
+            } else {
+                window.removeEventListener("touchmove", move);
+            }
+            snapToSide(e);
+        }
+    };
+
+    const snapToSide = (e) => {
+        const wrapperElement = document.querySelector('.page-wrapper');
+        const powerToysElementContainer = powerToysElement.querySelector(".power-toys-container");
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const panelHeight = powerToysElementContainer.clientHeight;
+        let currPositionX, currPositionY;
+        if (e.type === "touchend") {
+            currPositionX = e.changedTouches[0].clientX;
+            currPositionY = e.changedTouches[0].clientY;
+        } else {
+            currPositionX = e.clientX;
+            currPositionY = e.clientY;
+        }
+        if (currPositionY < 50) {
+            powerToysElement.style.top = 50 + "px";
+        }
+        if (currPositionY > wrapperElement.clientHeight - 50) {
+            powerToysElement.style.top = (wrapperElement.clientHeight - 50) + "px";
+        }
+        if (currPositionX < windowWidth / 2) {
+            powerToysElement.style.left = 30 + "px";
+            powerToysElement.classList.remove('onRight');
+            powerToysElement.classList.add('onLeft');
+        } else {
+            powerToysElement.style.left = windowWidth - 40 + "px";
+            powerToysElement.classList.remove('onLeft');
+            powerToysElement.classList.add('onRight');
+        }
+        if (powerToysElementBtn.getBoundingClientRect().y > (windowHeight - panelHeight)) {
+            powerToysElement.classList.add("onBottom");
+        } else {
+            powerToysElement.classList.remove("onBottom");
+        }
+        localStorage.setItem("powerToysTop", powerToysElement.style.top);
+        localStorage.setItem("powerToysLeft", powerToysElement.style.left);
+    };
+
+    if (localStorage.getItem("powerToysTop")) {
+        powerToysElement.style.top = localStorage.getItem("powerToysTop");
+    }
+    if (localStorage.getItem("powerToysLeft")) {
+        powerToysElement.style.left = localStorage.getItem("powerToysLeft");
+    }
+
+    powerToysElement.addEventListener("mousedown", mouseDown);
+
+    powerToysElement.addEventListener("mouseup", mouseUp);
+
+    powerToysElement.addEventListener("touchstart", mouseDown);
+
+    powerToysElement.addEventListener("touchend", mouseUp);
+
+    powerToysElementBtn.addEventListener("click", (e) => {
+        if (
+            oldPositionY === powerToysElement.style.top &&
+            oldPositionX === powerToysElement.style.left
+        ) {
+            const powerToysElementContainer = powerToysElement.querySelector(".power-toys-container");
+            powerToysElementContainer.style.opacity = "0";
+            powerToysElement.classList.toggle("powerToys-active");
+            powerToysElement.classList.remove("openSubPanel");
+            if (powerToysModalWrapper){
+                powerToysModalWrapper.classList.remove("open");
+                powerToysModalWrapper.querySelectorAll(".powerToysjsModal").forEach(subPanel => {
+                    subPanel.classList.remove("open");
+                })
+            }
+
+            addTickerElm();
+
+            //Start load widget here
+            renderWidget();
+            //Start loading quick action here
+            renderQuickaction();
+            setTimeout(() => checkOutViewport(), 150);
+        }
+    });
+
+    closepowerToysElement.addEventListener("click", (e) => {
+        powerToysElement.classList.remove("powerToys-active");
+    });
+
+    document.querySelector(".powertoys-header-right .powertoys-darklight-switcher").addEventListener("click", (e) => {
+        powerToysElement.classList.toggle("jajumaLightMode");
+        if (powerToysElement.classList.contains("jajumaLightMode")) {
+            localStorage.setItem("jajumaLightMode", "true");
+        } else {
+            localStorage.setItem("jajumaLightMode", "false");
+        }
+    });
+
+    const renderWidget = async () => {
+        var widgetIdArr = [];
+        document.querySelectorAll(".widget-item[lazyload][data-widget-id]").forEach(e => {
+            widgetIdArr.push(e.getAttribute('data-widget-id'));
+        })
+        Promise.all(widgetIdArr.map(widgetId => {
+            var url = '<?= $sectionLoadUrl ?>' + `?action_id=${widgetId}&type=dashboard`
+            var elem = document.querySelector(`.widget-item[data-widget-id='${widgetId}']`);
+            elem.classList.add("widgetloading");
+            return fetch(url).then(resp => {
+                if (resp.status === 200) {
+                    resp.json().then(json => {
+                        elem.innerHTML = json.html;
+                        if (json.js && (json.js !== '')) {
+                            //Load Additional Javascript
+                            loadScript(json.js);
+                        }
+                        elem.classList.remove("widgetloading");
+                        elem.removeAttribute('lazyload');
+                    })
+                } else {
+                    elem.classList.remove("widgetloading");
+                }
+            })
+        })).then(data => {
+            //Rescan magewire after load html
+            setTimeout(() => {
+                Magewire.rescan()
+            }, 250);
+        })
+    }
+
+    const renderQuickaction = async () => {
+        //Load all lazy image
+        document.querySelectorAll('.powertoys-action-item img[data-src]').forEach(e => {
+            e.src = e.getAttribute('data-src');
+        })
+
+        var quickactionIdArr = [];
+        document.querySelectorAll(".quickaction-item[lazyload][data-action-id]").forEach(e => {
+            quickactionIdArr.push(e.getAttribute('data-action-id'));
+        })
+        Promise.all(quickactionIdArr.map(actionId => {
+            var url = '<?= $sectionLoadUrl ?>' + `?action_id=${actionId}&type=quickaction`
+            var elem = document.querySelector(`.quickaction-item[data-action-id='${actionId}']`);
+            var contentElem = document.querySelector(`.quickaction-item[data-action-id='${actionId}'] .widget-action-button-div`);
+            if (contentElem) {
+                contentElem.classList.add("widgetloading");
+                return fetch(url).then(resp => {
+                    if (resp.status === 200) {
+                        resp.json().then(json => {
+                            contentElem.innerHTML = json.html;
+                            if (json.js && (json.js !== '')) {
+                                //Load Additional Javascript
+                                loadScript(json.js);
+                            }
+                            contentElem.classList.remove("widgetloading");
+                            elem.removeAttribute('lazyload');
+                        })
+                    } else {
+                        contentElem.classList.remove("widgetloading");
+                    }
+                })
+            }
+        })).then(data => {
+            //Rescan magewire after load html
+            setTimeout(() => {
+                Magewire.rescan()
+            }, 250);
+        })
+    }
+
+    function powerToysOpenModal(actionId) {
+        var containerWrapper = document.querySelector("#jajuma-powertoys-floating-panel .power-toys-container");
+        var modalWindow = document.querySelector(".powerToysjsModal[data-action-id='" + actionId + "']");
+        var needLoadData = document.querySelector(".powerToysjsModal[lazyload][data-action-id='" + actionId + "']");
+        new Promise(resolve => {
+            if (needLoadData) {
+                containerWrapper.classList.add("powertoysloading");
+                try {
+                    fetch('<?= $sectionLoadUrl ?>' + `?action_id=${actionId}&type=quickaction`).then(rawResp => {
+                        if (rawResp.status === 200) {
+                            rawResp.json().then(json => {
+                                needLoadData.removeAttribute('lazyload');
+                                needLoadData.querySelector('[model-content]').innerHTML = json.html;
+                                if (json.js && (json.js !== '')) {
+                                    //Load Additional Javascript
+                                    loadScript(json.js);
+                                }
+                                //Rescan magewire after load html
+                                Magewire.rescan();
+                                resolve();
+                            })
+                        } else {
+                            containerWrapper.classList.remove("powertoysloading");
+                            throw new Error('Error! Cannot loading Powertoys')
+                        }
+                    })
+                } catch (error) {
+                    console.log('There was an error', error);
+                    containerWrapper.classList.remove("powertoysloading");
+                }
+            } else {
+                resolve();
+            }
+        }).then(() => {
+            var actionBtn = powerToysElement.querySelector("[data-action-id='" + actionId + "']");
+
+            modalWindow.classList ? modalWindow.classList.add('open') : modalWindow.className += ' ' + 'open';
+            modalWindow.style.top = actionBtn.getBoundingClientRect().y + actionBtn.clientHeight + 10 + "px";
+            modalWindow.style.left = actionBtn.getBoundingClientRect().x + "px";
+
+            powerToysModalWrapper.classList.add("open");
+            powerToysElement.classList.add("openSubPanel");
+            containerWrapper.classList.remove("powertoysloading");
+        })
+    }
+
+    function powerToysCloseModal() {
+        /* Get close button */
+        if (powerToysModalWrapper) {
+            var closeButtonArr = powerToysModalWrapper.querySelectorAll('.jsModalClose');
+            closeButtonArr.forEach(closeButton => {
+                closeButton.addEventListener("click", function() {
+                    this.closest('.powerToysjsModal').classList.remove('open');
+                    powerToysModalWrapper.classList.remove("open");
+                    powerToysElement.classList.remove("openSubPanel");
+                })
+            })
+        }
+    }
+
+    function checkOutViewport() {
+        let powertoysContainer = document.querySelector("#jajuma-powertoys-floating-panel .power-toys-container");
+        const rect = powertoysContainer.getBoundingClientRect();
+        var windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+        if (rect.bottom > windowHeight) {
+            powertoysContainer.style.top = `${windowHeight - rect.bottom}px`;
+        } else {
+            powertoysContainer.style.top = 0;
+        }
+        powerToysElement.querySelector(".power-toys-container").style.opacity = '1';
+    }
+
+    function addTickerElm() {
+        let tickerElm = document.querySelectorAll('#jajuma-powertoys-floating-panel .powertoys-panel-footer .powertoys-footer-ticker .powertoys-footer-ticker-content')[0];
+        if (tickerElm.innerHTML === '') {
+            let url = '<?= $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html/addTicker')) ?>';
+            return fetch(url).then(resp => {
+                if (resp.status === 200) {
+                    resp.json().then(json => {
+                        tickerElm.innerHTML = json.html;
+                    })
+                }
+            });
+        }
+    }
+
+    if (document.readyState != 'loading') {
+        powerToysCloseModal();
+    } else {
+        document.addEventListener('DOMContentLoaded', powerToysCloseModal());
+    }
+</script>

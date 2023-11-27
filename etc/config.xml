@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <power_toys>
+            <general>
+                <is_enable>1</is_enable>
+                <enable_quickaction>1</enable_quickaction>
+                <enable_dashboard>1</enable_dashboard>
+                <enable_bookmark>1</enable_bookmark>
+                <cookie_lifetime>86400</cookie_lifetime>
+            </general>
+        </power_toys>
+    </default>
+</config>

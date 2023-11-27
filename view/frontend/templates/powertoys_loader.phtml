@@ -1,0 +1,151 @@
+<?php
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+declare(strict_types=1);
+
+/** @var Template $block */
+/** @var Escaper $escaper */
+
+use Jajuma\PowerToys\Model\Auth;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+$urlLoader = $escaper->escapeUrl($block->getUrl('jajuma_powertoys/html/render'));
+$livewireScriptUrl = $escaper->escapeUrl($block->getViewFileUrl('Magewirephp_Magewire::js/livewire.js'));
+?>
+<div powertoys-loader></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async (event) => {
+        //Script Loader
+        var getScript = url => new Promise((resolve, reject) => {
+            const script = document.createElement('script')
+            script.src = url
+            script.async = true
+            script.onerror = reject
+            script.onload = script.onreadystatechange = function() {
+                const loadState = this.readyState
+                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                script.onload = script.onreadystatechange = null
+                resolve()
+            }
+            document.head.appendChild(script)
+        })
+        var loadScript = scriptContent => {
+            const script = document.createElement('script')
+            script.text = scriptContent
+            document.head.appendChild(script)
+        }
+
+        const startPowerToys = async () => {
+            //Cookie class
+            class Cookies {
+                static get(e) {
+                    if (0 === document.cookie.length) return null;
+                    var t = document.cookie.indexOf(`${e}=`);
+                    if (-1 === t) return null;
+                    t = t + e.length + 1;
+                    var i = document.cookie.indexOf(";", t);
+                    return -1 == i && (i = document.cookie.length), decodeURIComponent(document.cookie.substring(t, i))
+                }
+
+                static set(e, t, i) {
+                    if (i > 0) {
+                        let o = new Date().getTime() + 864e5 * i, r = new Date(o).toUTCString();
+                        document.cookie = e + `=${encodeURIComponent(t)}; expires=${r}; path=/`
+                    } else document.cookie = e + `=${encodeURIComponent(t)}; path=/`
+                }
+
+                static remove(e) {
+                    e && (document.cookie = e + `=''; expires=${new Date(1).toUTCString()}`)
+                }
+
+                static getAll() {
+                    if (0 === document.cookie.length) return null;
+                    var e = {};
+                    return document.cookie.split(";").forEach(t => {
+                        let i = t.split("=");
+                        e[(i[0] + "").trim()] = decodeURIComponent(i[1])
+                    }), e
+                }
+
+                static check(e) {
+                    return !!(e = this.get(e)) && "" !== e
+                }
+            }
+
+            if (Cookies.get('<?= Auth::AUTH_COOKIE_2_NAME ?>')) {
+                try {
+                    //Load and init Magewire template
+                    var resp = await fetch('<?= $urlLoader ?>' + `?section_name=jajuma_power_toys`);
+                    if (resp.status !== 200) {
+                        throw new Error('Error! Cannot loading Powertoys')
+                    }
+                    var json = await resp.json();
+                    document.querySelector("div[powertoys-loader]").innerHTML = json.html;
+                    if (json.js && (json.js !== '')) {
+                        //Load Additional Javascript
+                        loadScript(json.js);
+                    }
+
+                    //Load Magewire core
+                    if (typeof (window.magewire) === 'undefined') {
+                        //Dynamic load magewire for hyva theme
+                        if (typeof (hyva) === 'undefined') {
+                            //For luma, it should load by require js
+                            require(['Magewirephp_MagewireRequireJs/js/magewire', 'domReady!'], function () {
+                                Magewire.rescan();
+                            });
+                        } else {
+                            await getScript('<?= $livewireScriptUrl ?>');
+                            await getScript('<?= $urlLoader ?>' + `?section_name=jajuma_power_toys_magewire`);
+                            Magewire.rescan();
+                        }
+                    } else {
+                        Magewire.rescan();
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        }
+
+        const checkSessionAllow = () => {
+            return new Promise(async (resolve, reject) => {
+                let adminUrl = localStorage.getItem('admin_url');
+                if (adminUrl && adminUrl !== '') {
+                    let resp = await fetch(adminUrl);
+                    try {
+                        let jsonresp = await resp.json();
+                        if (jsonresp.success === true){
+                            resolve();
+                        } else {
+                            reject();
+                        }
+                    } catch (e) {
+                        reject();
+                    }
+                }
+            });
+
+        }
+
+        (events => {
+            const loadPowerToys = async () => {
+                events.forEach(type => window.removeEventListener(type, loadPowerToys));
+                checkSessionAllow().then(
+                    ()=>{
+                        startPowerToys()
+                    },
+                    ()=>{
+                        //console.log('Error');
+                    }
+                );
+            };
+            events.forEach(type => window.addEventListener(type, loadPowerToys, {once: true, passive: true}))
+        })(['touchstart', 'mouseover', 'wheel', 'keydown'])
+    });
+</script>

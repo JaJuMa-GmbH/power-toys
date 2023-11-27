@@ -1,0 +1,26 @@
+{
+    "name": "jajuma/power-toys",
+    "description": "JaJuMa Power Toys for Magento 2",
+        "type": "magento2-module",
+        "license": "MIT",
+        "version": "1.0.0",
+    "authors": [
+        {
+            "email": "info@jajuma.de",
+            "name": "JaJuMa"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "magewirephp/magewire": "^1.10",
+        "magewirephp/magewire-requirejs": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jajuma\\PowerToys\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}

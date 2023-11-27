@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+	<menu>
+		<update id="Jajuma::top_level_extensions"
+				module="Jajuma_PowerToys"
+				resource="Jajuma_General::jajuma_extensions"
+				sortOrder="65"
+				title="JaJuMa"/>
+		<add id="Jajuma_PowerToys::jajuma_powertoys"
+			 title="JaJuMa Power Toys"
+			 module="Jajuma_PowerToys"
+			 sortOrder="3000"
+			 resource="Jajuma_PowerToys::config_jajuma_powertoy"
+			 parent="Jajuma::top_level_extensions"/>
+		<add id="Jajuma_PowerToys::jajuma_powertoys_configuration"
+			 title="Configuration"
+			 module="Jajuma_PowerToys"
+			 sortOrder="3010"
+			 parent="Jajuma_PowerToys::jajuma_powertoys"
+			 action="admin/system_config/edit/section/power_toys"
+			 resource="Jajuma_PowerToys::config_jajuma_powertoy"/>
+	</menu>
+</config>

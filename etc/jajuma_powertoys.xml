@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author    JaJuMa GmbH <info@jajuma.de>
+ * @copyright Copyright (c) 2023 JaJuMa GmbH <https://www.jajuma.de>. All rights reserved.
+ * @license   http://opensource.org/licenses/mit-license.php MIT License
+ */
+-->
+
+<powertoys xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Jajuma_PowerToys:etc/jajuma_powertoys.xsd">
+
+<!--    Example quick action-->
+    <quickaction id="example_quickaction" class="Jajuma\PowerToys\Block\PowerToys\QuickAction">
+        <label translate="true">Example quick action</label>
+        <arguments>
+            <argument name="enable">false</argument>
+            <argument name="action_type">popup</argument>
+            <argument name="template">Jajuma_PowerToys::default_templates/quickaction.phtml</argument>
+            <argument name="magewire"></argument>
+            <argument name="lazyload">false</argument>
+            <argument name="cache_lifetime">0</argument>
+            <argument name="sort_order">0</argument>
+            <argument name="acl_resource"></argument>
+        </arguments>
+    </quickaction>
+
+<!--    Example dashboard-->
+    <dashboard id="example_dashboard" class="Jajuma\PowerToys\Block\PowerToys\Dashboard">
+        <label translate="true">Example dashboard</label>
+        <arguments>
+            <argument name="enable">false</argument>
+            <argument name="template">Jajuma_PowerToys::default_templates/dashboard.phtml</argument>
+            <argument name="lazyload">true</argument>
+            <argument name="cache_lifetime">86400</argument>
+            <argument name="sort_order">0</argument>
+            <argument name="acl_resource"></argument>
+        </arguments>
+    </dashboard>
+</powertoys>

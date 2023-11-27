@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="jajuma_powertoys_auth" resource="default" engine="innodb" comment="jajuma_powertoys_auth Table">
+        <column xsi:type="int" name="admin_user_id" unsigned="true" nullable="false" comment="Admin User Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="admin_user_id"/>
+        </constraint>
+        <column xsi:type="varchar" name="auth_token" nullable="false" comment="Auth Token" length="255"/>
+        <column xsi:type="int" name="expire_at" unsigned="true" nullable="false" comment="Expire At"/>
+    </table>
+    <table name="jajuma_powertoys_bookmark" resource="default" engine="innodb" comment="jajuma_powertoys_bookmark Table">
+		<column xsi:type="int" name="bookmark_id" padding="10" unsigned="true" nullable="false" identity="true" comment="Entity Id"/>
+		<constraint xsi:type="primary" referenceId="PRIMARY">
+			<column name="bookmark_id"/>
+		</constraint>
+		<column name="name" nullable="false" xsi:type="varchar" comment="Name" length="255"/>
+		<column name="url" nullable="false" xsi:type="varchar" comment="Url" length="255"/>
+		<column name="icon_svg" nullable="true" xsi:type="varchar" comment="Icon Svg Name" length="255"/>
+		<column name="position" nullable="true" xsi:type="int" comment="Position" identity="false"/>
+	</table>
+</schema>
