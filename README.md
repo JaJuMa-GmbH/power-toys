@@ -98,10 +98,12 @@ displaying the installed and enabled Toys.
 
 ## Available Power Toys for Magento
 
-| Quick Action Toys                                                     | Dashboard Toys |
-|-----------------------------------------------------------------------|----------------|
-| :broom: [Clear Cache](https://github.com/JaJuMa-GmbH/pot-clear-cache) | :vertical_traffic_light: [Core Web Vitals](https://github.com/JaJuMa-GmbH/pot-core-web-vitals) |
-|                                                                       | :bar_chart: [Order Status](https://github.com/JaJuMa-GmbH/pot-order-status) |
+| Quick Action Toys | Dashboard Toys |
+|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| :broom: [Clear Cache](https://github.com/JaJuMa-GmbH/pot-clear-cache)                             | :vertical_traffic_light: [Core Web Vitals](https://github.com/JaJuMa-GmbH/pot-core-web-vitals) |
+| :speech_balloon: [Chat GPT](https://github.com/JaJuMa-GmbH/pot-chat-gpt)                          | :bar_chart: [Order Status](https://github.com/JaJuMa-GmbH/pot-order-status)                   |
+| :1234: [Quick Reindex](https://github.com/JaJuMa-GmbH/pot-quick-reindex)                          | :sun_behind_small_cloud: [Weather](https://github.com/JaJuMa-GmbH/pot-weather)                |
+| :arrows_counterclockwise: [Google Translate](https://github.com/JaJuMa-GmbH/pot-google-translate) |  |
 
 ## Can I Create My Own Toy?
 
