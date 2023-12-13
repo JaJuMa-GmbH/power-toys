@@ -273,20 +273,23 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     }
 
     const showArrow = wrapper => {
-        if (wrapper.offsetWidth < wrapper.scrollWidth) {
-            wrapper.classList.remove('hide-arrow-left');
-            wrapper.classList.remove('hide-arrow-right');
+        if (wrapper) {
+            if (wrapper.offsetWidth < wrapper.scrollWidth) {
+                wrapper.classList.remove('hide-arrow-left');
+                wrapper.classList.remove('hide-arrow-right');
 
-            if (wrapper.scrollLeft < 1) {
+                if (wrapper.scrollLeft < 1) {
+                    wrapper.classList.add('hide-arrow-left');
+                }
+
+                if ((wrapper.scrollWidth - wrapper.offsetWidth) < wrapper.scrollLeft) {
+                    wrapper.classList.add('hide-arrow-right');
+                }
+
+            } else {
                 wrapper.classList.add('hide-arrow-left');
-            }
-
-            if ((wrapper.scrollWidth - wrapper.offsetWidth) < wrapper.scrollLeft) {
                 wrapper.classList.add('hide-arrow-right');
             }
-        } else {
-            wrapper.classList.add('hide-arrow-left');
-            wrapper.classList.add('hide-arrow-right');
         }
     }
 
