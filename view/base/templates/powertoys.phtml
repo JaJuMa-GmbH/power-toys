@@ -305,11 +305,29 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
         checkShowingArrow();
     });
 
-    [actionList, dashboardList, bookmarkList].forEach(element => element.addEventListener("scroll", (event) => {
-        setTimeout(()=>{
-            showArrow(element);
-        },50);
-    }));
+    if (actionList) {
+            actionList.addEventListener("scroll", (event) => {
+            setTimeout(()=>{
+                showArrow(element);
+            },50);
+        });
+    }
+
+    if (dashboardList) {
+        dashboardList.addEventListener("scroll", (event) => {
+            setTimeout(()=>{
+                showArrow(element);
+            },50);
+        });
+    }
+
+    if (bookmarkList) {
+        bookmarkList.addEventListener("scroll", (event) => {
+            setTimeout(()=>{
+                showArrow(element);
+            },50);
+        });
+    }
 
     const dragScrolling = (sliderTarget) => {
         const slider = document.querySelector(sliderTarget);
