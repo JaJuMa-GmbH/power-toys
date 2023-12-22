@@ -1,7 +1,9 @@
 # :jigsaw: Power Toys for Magento 2 by [JaJuMa](https://www.jajuma.de/)
 
-<img align="right" width="35%" height="auto" src="https://www.jajuma.de/media/wysiwyg/jajuma-develop/power-toys-magento/JaJuMa-Power-Toys-For-Magento-2-small.png">  
+<img src="https://www.jajuma.de/media/wysiwyg/jajuma-develop/power-toys-magento/JaJuMa-Power-Toys-for-Magento-Banner.jpg">  
 
+
+<img align="right" width="35%" height="auto" src="https://www.jajuma.de/media/wysiwyg/jajuma-develop/power-toys-magento/JaJuMa-Power-Toys-For-Magento-2-small.png">  
 Power Toys for Magento 2 by [JaJuMa](https://www.jajuma.de/en) is a framework
 for tools and helpers, a.k.a "Toys", for Magento Admins to tune and streamline their Magento experience for greater productivity.
 
@@ -98,12 +100,16 @@ displaying the installed and enabled Toys.
 
 ## Available Power Toys for Magento
 
-| Quick Action Toys | Dashboard Toys |
-|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| :broom: [Clear Cache](https://github.com/JaJuMa-GmbH/pot-clear-cache)                             | :vertical_traffic_light: [Core Web Vitals](https://github.com/JaJuMa-GmbH/pot-core-web-vitals) |
-| :speech_balloon: [Chat GPT](https://github.com/JaJuMa-GmbH/pot-chat-gpt)                          | :bar_chart: [Order Status](https://github.com/JaJuMa-GmbH/pot-order-status)                   |
-| :1234: [Quick Reindex](https://github.com/JaJuMa-GmbH/pot-quick-reindex)                          | :sun_behind_small_cloud: [Weather](https://github.com/JaJuMa-GmbH/pot-weather)                |
-| :arrows_counterclockwise: [Google Translate](https://github.com/JaJuMa-GmbH/pot-google-translate) |  |
+| Quick Action Toys                                                                                 | Dashboard Toys                                                                                  |
+|---------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| :broom: [Clear Cache](https://github.com/JaJuMa-GmbH/pot-clear-cache)                             | :vertical_traffic_light: [Core Web Vitals](https://github.com/JaJuMa-GmbH/pot-core-web-vitals)  |
+| :speech_balloon: [Chat GPT](https://github.com/JaJuMa-GmbH/pot-chat-gpt)                          | :bar_chart: [Order Status](https://github.com/JaJuMa-GmbH/pot-order-status)                     |
+| :1234: [Quick Reindex](https://github.com/JaJuMa-GmbH/pot-quick-reindex)                          | :sun_behind_small_cloud: [Weather](https://github.com/JaJuMa-GmbH/pot-weather)                  |
+| :arrows_counterclockwise: [Google Translate](https://github.com/JaJuMa-GmbH/pot-google-translate) | :chart_with_upwards_trend: [Matomo Reports](https://github.com/JaJuMa-GmbH/pot-matomo-reports)  |
+| :white_check_mark: [Todo](https://github.com/JaJuMa-GmbH/pot-todo)                                | :rocket: Hyvä Inline CSS: [Hyvä Inline CSS](https://github.com/JaJuMa-GmbH/pot-hyva-inline-css) |
+| :arrows_clockwise: [Quick Translation](https://github.com/JaJuMa-GmbH/pot-quick-translation)      | :people_holding_hands: [Customers](https://github.com/JaJuMa-GmbH/pot-customers)                |
+| :currency_exchange: [Currency Converter](https://github.com/JaJuMa-GmbH/pot-currency-converter)   | :newspaper: [News](https://github.com/JaJuMa-GmbH/pot-news)                                     |
+| :memo: [Note](https://github.com/JaJuMa-GmbH/pot-note)                                            |                                                                                                 |
 
 ## Can I Create My Own Toy?
 
