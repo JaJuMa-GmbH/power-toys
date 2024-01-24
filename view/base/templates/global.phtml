@@ -4,10 +4,13 @@
         --jajuma-develop-module: #efb600;
         --jajuma-develop-light-module: #ffe9a3;
         --jajuma-develop-lighter-module: #fff5d5;
+        --jajuma-develop-status-success: #47cf73;
+        --jajuma-develop-status-fail: #f87171;
+        --jajuma-develop-powertoys-zindex: 999999999999;
     }
 
     #jajuma-powertoys-floating-panel {
-        z-index: 999;
+        z-index: var(--jajuma-develop-powertoys-zindex);
         position: fixed;
         transform: translate(-50%, -50%);
         top: 40%;
@@ -466,7 +469,7 @@
     /* PowerToys Modal */
 
     .powerToysModalWrapper {
-        z-index: 1000;
+        z-index: calc(var(--jajuma-develop-powertoys-zindex) + 1000);
         position: fixed;
         width: 100%;
         height: 100%;
@@ -828,27 +831,6 @@
         }
     }
 
-    .widget-item.widgetloading:before, .widget-action-button-div.widgetloading:before {
-        content: '';
-        box-sizing: border-box;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 20px;
-        height: 20px;
-        margin-top: -10px;
-        margin-left: -10px;
-        border-radius: 50%;
-        border: 2px solid #ccc;
-        border-top-color: #000;
-        animation: widgetspinner .6s linear infinite;
-    }
-
-    .widget-action-button-div.widgetloading {
-        min-width: 5rem;
-        min-height: 20px;
-    }
-
     .powertoys-actions-list:not(.dragging),
     .powertoys-dashboard-widgets:not(.dragging),
     .powertoys-bookmark-bar:not(.dragging) {
@@ -933,6 +915,190 @@
     @media (max-width: 480px) {
         .pot-toggle {
             display: none;
+        }
+    }
+
+    .widget-item.widgetloading:before, .quickaction-action-wrapper.widgetloading:before {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin-top: -10px;
+        margin-left: -10px;
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        border-top-color: #000;
+        animation: widgetspinner .6s linear infinite;
+    }
+
+    .quickaction-action-wrapper.widgetloading {
+        min-width: 5rem;
+        min-height: 20px;
+    }
+
+    /* Favorite Actions */
+
+    .power-toys-favorite {
+        position: absolute;
+        bottom: -100%;
+        left: 10px;
+        width: 100px;
+        height: 150px;
+        margin-bottom: 0;
+        transition: all 0.3s ease;
+        transform-origin: center left;
+        transform: scale(0);
+    }
+
+    #jajuma-powertoys-floating-panel:hover .power-toys-favorite {
+        transform: scale(1);
+    }
+
+    .power-toys-favorite .quickaction-item {
+        position: absolute;
+        background: var(--jajuma-develop-gradient, linear-gradient(-30deg, rgba(255, 233, 163, 0.90) 0%, rgba(255, 245, 213, 0.90) 100%));
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.5s ease;
+        opacity: 0;
+    }
+
+    #jajuma-powertoys-floating-panel:not(.powerToys-active):hover .power-toys-favorite .quickaction-item {
+        opacity: 1;
+    }
+
+    .power-toys-favorite .quickaction-item * {
+        font-size: 0;
+    }
+
+    .power-toys-favorite .quickaction-item:hover {
+        transform: scale(1.2);
+    }
+
+    .power-toys-favorite .quickaction-item {
+        background: var(--jajuma-develop-gradient, linear-gradient(-30deg, rgba(255, 233, 163, 0.90) 0%, rgba(255, 245, 213, 0.90) 100%));
+    }
+
+    .power-toys-favorite .quickaction-item .powertoys-action-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .power-toys-favorite .quickaction-item img {
+        position: relative;
+        width: 20px;
+        height: 20px;
+    }
+
+    .power-toys-favorite .quickaction-item:nth-child(2) {
+        left: 45px;
+        top: 15px;
+    }
+
+    .power-toys-favorite .quickaction-item:nth-child(3) {
+        left: 60px;
+        top: 60px;
+    }
+
+    .power-toys-favorite .quickaction-item:nth-child(4) {
+        left: 45px;
+        top: 100px;
+    }
+
+    .power-toys-favorite .quickaction-item:nth-child(5) {
+        left: 0;
+        bottom: 0;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite {
+        transform-origin: center right;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite {
+        left: unset;
+        right: 10px;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite .quickaction-item:first-child {
+        right: 0;
+        left: unset;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite .quickaction-item:nth-child(2) {
+        right: 45px;
+        left: unset;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite .quickaction-item:nth-child(3) {
+        right: 60px;
+        left: unset;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite .quickaction-item:nth-child(4) {
+        right: 45px;
+        left: unset;
+    }
+
+    #jajuma-powertoys-floating-panel.onRight .power-toys-favorite .quickaction-item:nth-child(5) {
+        right: 0;
+        left: unset;
+    }
+
+    .potStatusSuccess .jajuma-powertoys-floating-btn {
+        animation: animate-potStatusSuccess 3s linear infinite;
+    }
+    .potStatusFail .jajuma-powertoys-floating-btn {
+        animation: animate-potStatusFail 3s linear infinite;
+    }
+
+    @keyframes animate-potStatusSuccess {
+        0% {
+            box-shadow: 0 0 0 0 rgba(109, 2565, 74, 0.7), 0 0 0 0 rgba(109, 255, 74, 0.7);
+            background: #86efac;
+        }
+
+        40% {
+            box-shadow: 0 0 0 25px rgba(109, 255, 74, 0.0), 0 0 0 0 rgba(109, 255, 74, 0.7);
+            background: #47cf73;
+        }
+
+        80% {
+            box-shadow: 0 0 0 25px rgba(109, 255, 74, 0.0), 0 0 0 15px rgba(109, 255, 74, 0);
+            background-color: #86efac;
+        }
+
+        100% {
+
+        }
+    }
+
+    @keyframes animate-potStatusFail {
+        0% {
+            box-shadow: 0 0 0 0 rgba(2565, 109, 74, 0.7), 0 0 0 0 rgba(255, 109, 74, 0.7);
+            background: #fecaca;
+        }
+
+        40% {
+            box-shadow: 0 0 0 25px rgba(255, 109, 74, 0.0), 0 0 0 0 rgba(255, 109, 74, 0.7);
+            background: #f87171;
+        }
+
+        80% {
+            box-shadow: 0 0 0 25px rgba(255, 109, 74, 0.0), 0 0 0 15px rgba(255, 109, 74, 0);
+            background-color: #fecaca;
+        }
+
+        100% {
+
         }
     }
 </style>

@@ -38,6 +38,8 @@ class Data extends AbstractHelper
 
     public const POWER_TOYS_ENABLE_BOOKMARK = 'power_toys/general/enable_bookmark';
 
+    public const POWER_TOYS_FAVORITE_ACTION = 'power_toys/general/favorite_action';
+
     /**
      * @var StoreManagerInterface
      */
@@ -135,6 +137,28 @@ class Data extends AbstractHelper
             ScopeInterface::SCOPE_STORE,
             $store
         );
+    }
+
+    /**
+     * Get favorite actions
+     *
+     * @param $store
+     * @return array|false|string[]
+     */
+    public function getFavoriteActions($store = null)
+    {
+        $favoriteActionArr = [];
+        $favoriteActions = $this->scopeConfig->getValue(
+            self::POWER_TOYS_FAVORITE_ACTION,
+            ScopeInterface::SCOPE_STORE,
+            $store
+        );
+
+        if ($favoriteActions) {
+            $favoriteActionArr = explode(',', $favoriteActions);
+        }
+
+        return $favoriteActionArr;
     }
 
     /**

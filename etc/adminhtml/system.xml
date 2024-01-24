@@ -34,7 +34,7 @@
                                                                 <b>Magento 2 Power Toys</b> by <a href="https://www.jajuma.de/en"
                                                                         target="_blank"><b>JaJuMa</b></a>
                                                         </div>
-                                                        <div class="jjme-version">Installed Version: <b>1.0.1</b></div>
+                                                        <div class="jjme-version">Installed Version: <b>1.0.2</b></div>
                                                 </div>
                                                 <div class="jjme-more-about-extension">
                                                         <div class="jjme-more-info">
@@ -345,6 +345,8 @@
                                                         target="_blank">git 4 Page Builder</a>
                                                 <a href="https://www.jajuma.de/en/jajuma-develop/extensions/hyva-inline-css-extension-for-magento-with-hyva-themes"
                                                         target="_blank">Hyvä Inline CSS</a>
+                                                <a href="https://www.jajuma.de/en/jajuma-develop/magento-extensions/smart-speculations-rules-extension-for-magento-2"
+                                                        target="_blank">Smart Speculations Rules</a>
                                                 <a href="https://www.jajuma.de/en/jajuma-develop/extensions/syntax-highlighter-4-page-builder-extension-for-magento-2"
                                                         target="_blank"><b>Free:</b> Syntax Highlighter 4 Page Builder</a>
                                                 <a href="https://www.jajuma.de/en/jajuma-develop/extensions/font-awesome-icons-for-hyva-themes-extension"
@@ -413,6 +415,13 @@
                     <label>Cookie Lifetime</label>
                     <validate>validate-number</validate>
                     <comment>Time for powertoys cookie in frontend</comment>
+                </field>
+                <field id="favorite_action" translate="label" type="multiselect" sortOrder="160" showInDefault="1" showInWebsite="1" showInStore="1" >
+                    <label>Favorite Quick Actions</label>
+                    <source_model>Jajuma\PowerToys\Model\System\Config\Source\FavoriteAction</source_model>
+                    <depends>
+                        <field id="is_enable">1</field>
+                    </depends>
                 </field>
             </group>
         </section>
