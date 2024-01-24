@@ -18,6 +18,12 @@ use Magento\Framework\Escaper;
 
 $powerToysHelper = $this->helper(Data::class);
 $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html/load'));
+$favoriteActions = $powerToysHelper->getFavoriteActions();
+
+$quickActionBlocks = null;
+if ($block->isEnabledQuickAction()) {
+    $quickActionBlocks = $block->getBlocks('quickaction');
+}
 ?>
 
 <?php if ($block->isAdmin()): ?>
@@ -32,6 +38,33 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     <span class="jajuma-powertoys-floating-btn">
         <img src="<?= $block->escapeUrl($this->getDefaultIcon()); ?>" alt="JaJuMa Power Toys" draggable="false" />
     </span>
+
+    <?php if (!empty($favoriteActions) && ($quickActionBlocks !== null)): ?>
+        <ul class="power-toys-favorite">
+            <?php foreach ($quickActionBlocks as $quickAction) : ?>
+                <?php $quickActionId = $quickAction->getData('block_id'); ?>
+                <?php if ($quickAction->isEnable() && in_array($quickActionId, $favoriteActions)) : ?>
+                    <li class="quickaction-item" <?= $quickAction->isLazyload() ? 'lazyload' : '' ?> data-action-id="<?= $quickActionId ?>">
+                        <span class="powertoys-action-item powertoys-action-item-<?= $quickActionId ?>" onclick="<?= $quickAction->onClickAction(); ?>">
+                            <?php if ($quickAction->getQuickActionType() == 'popup') : ?>
+                                <?php if ($quickAction->getIcon()) : ?>
+                                    <img src="<?= $quickAction->getIcon() ?>">
+                                <?php endif; ?>
+                                <span class="quickaction-tooltip"><?= $quickAction->getName() ?></span>
+                            <?php endif; ?>
+                            <?php if ($quickAction->getQuickActionType() == 'button') : ?>
+                                <div class="quickaction-action-wrapper">
+                                    <?php if (!$quickAction->isLazyload()) : ?>
+                                        <?= $quickAction->toHtml() ?>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        </span>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 
     <div class="power-toys-container" powertoys-content>
         <div class="powertoys-panel-header">
@@ -64,10 +97,7 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
         </div>
 
         <!--        Quick action renderer -->
-        <?php
-        if ($block->isEnabledQuickAction()) {
-            $quickActionBlocks = $block->getBlocks('quickaction');
-        ?>
+        <?php if ($quickActionBlocks !== null): ?>
             <div class="powertoys-actions">
                 <ul class="powertoys-actions-list">
                     <span class="pot-navigation pot-previous" onclick="goBackItem(this.closest('.powertoys-actions-list'))">
@@ -103,7 +133,7 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
                     </span>
                 </ul>
             </div>
-        <?php } ?>
+        <?php endif; ?>
 
         <!--        Widget renderer -->
         <?php
@@ -308,7 +338,7 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     if (actionList) {
             actionList.addEventListener("scroll", (event) => {
             setTimeout(()=>{
-                showArrow(element);
+                showArrow(actionList);
             },50);
         });
     }
@@ -316,7 +346,7 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     if (dashboardList) {
         dashboardList.addEventListener("scroll", (event) => {
             setTimeout(()=>{
-                showArrow(element);
+                showArrow(dashboardList);
             },50);
         });
     }
@@ -324,7 +354,7 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     if (bookmarkList) {
         bookmarkList.addEventListener("scroll", (event) => {
             setTimeout(()=>{
-                showArrow(element);
+                showArrow(bookmarkList);
             },50);
         });
     }
@@ -497,6 +527,7 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     const powerToysElementBtn = powerToysElement.querySelector(".jajuma-powertoys-floating-btn");
     const closepowerToysElement = powerToysElement.querySelector(".powertoys-close-panel-btn");
     const powerToysModalWrapper = document.querySelector('#powerToysModalWrapperQuickAction');
+    const powerToysFavoriteElement = powerToysElement.querySelector('.power-toys-favorite');
 
     if (localStorage.getItem("jajumaLightMode")) {
         if (localStorage.getItem("jajumaLightMode") === "true") {
@@ -584,6 +615,11 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
         }
         localStorage.setItem("powerToysTop", powerToysElement.style.top);
         localStorage.setItem("powerToysLeft", powerToysElement.style.left);
+        if (powerToysElement.classList.contains("onRight")) {
+            localStorage.setItem("powerToysOnRight", "onRight");
+        } else {
+            localStorage.setItem("powerToysOnRight", "onLeft");
+        }
     };
 
     if (localStorage.getItem("powerToysTop")) {
@@ -591,6 +627,9 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
     }
     if (localStorage.getItem("powerToysLeft")) {
         powerToysElement.style.left = localStorage.getItem("powerToysLeft");
+    }
+    if (localStorage.getItem("powerToysOnRight")) {
+        powerToysElement.classList.add(localStorage.getItem("powerToysOnRight"));
     }
 
     powerToysElement.addEventListener("mousedown", mouseDown);
@@ -666,9 +705,9 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
             })
         })).then(data => {
             //Rescan magewire after load html
-            setTimeout(() => {
+            window.addEventListener('magewire:load', () => {
                 Magewire.rescan()
-            }, 250);
+            });
         })
     }
 
@@ -706,9 +745,9 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
             }
         })).then(data => {
             //Rescan magewire after load html
-            setTimeout(() => {
+            window.addEventListener('magewire:load', () => {
                 Magewire.rescan()
-            }, 250);
+            });
         })
     }
 
@@ -730,7 +769,9 @@ $sectionLoadUrl = $escaper->escapeUrl($block->getStoreUrl('jajuma_powertoys/html
                                     loadScript(json.js);
                                 }
                                 //Rescan magewire after load html
-                                Magewire.rescan();
+                                window.addEventListener('magewire:load', () => {
+                                    Magewire.rescan()
+                                });
                                 resolve();
                             })
                         } else {

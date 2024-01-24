@@ -82,9 +82,9 @@ $files = $magewire->getFileIcons();
                     </div>
                 </div>
                 <div class="field required">
-                    <label for="name" class="label"><span><?= $escaper->escapeHtml('Name') ?></span></label>
+                    <label for="bookmark_name" class="label"><span><?= $escaper->escapeHtml('Name') ?></span></label>
                     <div class="control">
-                        <input type="text" wire:model.defer="bookmark.name" name="name" id="name" title="<?= $escaper->escapeHtmlAttr('BookMark Name') ?>" class="input-text">
+                        <input type="text" wire:model.defer="bookmark.name" name="bookmark_name" id="bookmark_name" title="<?= $escaper->escapeHtmlAttr('BookMark Name') ?>" class="input-text">
                         <?php if ($magewire->hasError('bookmark.name')) : ?>
                             <?= $magewire->getError('bookmark.name') ?>
                         <?php endif ?>
@@ -127,7 +127,7 @@ $files = $magewire->getFileIcons();
     <script>
         var listIcon = document.querySelectorAll('#powertoys-bookmark-modal .bookmark-icon-item');
         const powerToyBookMarkPopupModal = document.querySelector('#powertoys-bookmark-modal .powertoys-modal');
-        var inputBookmarkName = document.querySelector("input[name='name']");
+        var inputBookmarkName = document.querySelector("input[name='bookmark_name']");
         var inputBookmarkUrl = document.querySelector("input[name='url']");
         var inputBookmarkId = document.querySelector("input[name='bookmark_id'");
         var inputBookmarkIcon = document.querySelector("input[name='icon_svg'");
