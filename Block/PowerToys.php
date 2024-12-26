@@ -177,4 +177,9 @@ class PowerToys extends Template
         $areaCode = $this->_state->getAreaCode();
         return $areaCode == \Magento\Framework\App\Area::AREA_ADMINHTML;
     }
+    
+    public function getNonce()
+    {
+        return $this->helper->getNonce();
+    }
 }

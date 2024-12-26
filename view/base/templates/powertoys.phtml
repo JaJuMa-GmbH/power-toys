@@ -24,10 +24,11 @@ $quickActionBlocks = null;
 if ($block->isEnabledQuickAction()) {
     $quickActionBlocks = $block->getBlocks('quickaction');
 }
+$nonce = $block->getNonce();
 ?>
 
 <?php if ($block->isAdmin()): ?>
-<script>
+<script <?= $nonce ? 'nonce="' . $nonce . '"' : '' ?>>
     localStorage.setItem("admin_url", "<?= $block->getUrl('jajuma_powertoys/session/check') ?>");
 </script>
 <?php endif ?>
@@ -269,7 +270,7 @@ if ($block->isEnabledQuickAction()) {
     </div>
 <?php endif; ?>
 
-<script>
+<script <?= $nonce ? 'nonce="' . $nonce . '"' : '' ?>>
     //Sort mode flag
     var editmode = false;
     var actionList = document.querySelector("[powertoys-content] .powertoys-actions .powertoys-actions-list");

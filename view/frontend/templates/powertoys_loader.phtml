@@ -15,10 +15,12 @@ use Magento\Framework\View\Element\Template;
 
 $urlLoader = $escaper->escapeUrl($block->getUrl('jajuma_powertoys/html/render'));
 $livewireScriptUrl = $escaper->escapeUrl($block->getViewFileUrl('Magewirephp_Magewire::js/livewire.js'));
+$powerToysHelper = $this->helper(\Jajuma\PowerToys\Helper\Data::class);
+$nonce = $powerToysHelper->getNonce();
 ?>
 <div powertoys-loader></div>
 
-<script>
+<script <?= $nonce ? 'nonce="' . $nonce . '"' : '' ?>>
     document.addEventListener("DOMContentLoaded", async (event) => {
         //Script Loader
         var getScript = url => new Promise((resolve, reject) => {

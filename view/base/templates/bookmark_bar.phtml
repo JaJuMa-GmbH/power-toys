@@ -17,6 +17,7 @@ use Jajuma\PowerToys\ViewModel\HeroiconsOutline;
 $heroicons = $block->getHeroIconsOutline();
 $magewire = $block->getMagewire();
 $files = $magewire->getFileIcons();
+$nonce = $block->getNonce();
 ?>
 
 <div>
@@ -124,7 +125,7 @@ $files = $magewire->getFileIcons();
         </div>
     </div>
 
-    <script>
+    <script <?= $nonce ? 'nonce="' . $nonce . '"' : '' ?>>
         var listIcon = document.querySelectorAll('#powertoys-bookmark-modal .bookmark-icon-item');
         const powerToyBookMarkPopupModal = document.querySelector('#powertoys-bookmark-modal .powertoys-modal');
         var inputBookmarkName = document.querySelector("input[name='bookmark_name']");

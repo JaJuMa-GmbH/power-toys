@@ -20,7 +20,8 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Math\Random;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-
+use Magento\Framework\ObjectManagerInterface;
+use ReflectionException;
 /**
  * Class Data
  * @package Jajuma\PowerToys\Helper
@@ -53,6 +54,8 @@ class Data extends AbstractHelper
 
     private $configCollection;
 
+    private $objectManager;
+
     /**
      * Data constructor.
      * @param Context $context
@@ -61,6 +64,7 @@ class Data extends AbstractHelper
      * @param Config $powerToyConfig
      * @param WriterInterface $configWriter
      * @param CollectionFactory $configCollection
+     * @param ObjectManagerInterface $objectManager
      */
     public function __construct(
         Context $context,
@@ -68,7 +72,8 @@ class Data extends AbstractHelper
         Auth $powerToysAuth,
         Config $powerToyConfig,
         WriterInterface $configWriter,
-        CollectionFactory $configCollection
+        CollectionFactory $configCollection,
+        ObjectManagerInterface $objectManager
     ) {
         parent::__construct($context);
         $this->storeManager = $storeManager;
@@ -76,6 +81,7 @@ class Data extends AbstractHelper
         $this->powerToyConfig = $powerToyConfig;
         $this->configWriter = $configWriter;
         $this->configCollection = $configCollection;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -268,6 +274,16 @@ class Data extends AbstractHelper
         else {
             return null;
         }
+    }
+
+    public function getNonce()
+    {
+        try {
+            $cspNonceProvider = $this->objectManager->get(\Magento\Csp\Helper\CspNonceProvider::class);
+        } catch (ReflectionException $reflectionException) {
+            return '';
+        }
+        return $cspNonceProvider->generateNonce();
     }
 
 }

@@ -11,9 +11,11 @@ use Magento\Framework\View\Element\Template;
 use Magewirephp\Magewire\ViewModel\Magewire;
 
 $magewireScripts = $block->getViewModel();
+$powerToysHelper = $this->helper(\Jajuma\PowerToys\Helper\Data::class);
+$nonce = $powerToysHelper->getNonce();
 ?>
 
-<script>
+<script <?= $nonce ? 'nonce="' . $nonce . '"' : '' ?>>
     window.magewire = new Livewire();
     window.Livewire = window.magewire
     window.Magewire = window.magewire
